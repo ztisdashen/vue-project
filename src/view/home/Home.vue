@@ -3,7 +3,14 @@
         <nav-bar class="home-nav">
             <div slot="middle">购物街</div>
         </nav-bar>
-        <scroll class="content-a" ref="scroll" :probeType='3' :listenScroll="true" @scroll='scroll'>
+        <scroll class="content-a"
+                ref="scroll"
+                :probeType='3'
+                @scrollToEnd="scrollToEnd"
+                :pullup="true"
+                :listenScroll="true"
+                @scroll='scroll'
+                :data="goodList">
             <home-swiper :banner="banner"/>
             <!--        <h2>主页</h2>-->
             <home-recommend :recommends="recommends"/>
@@ -42,7 +49,6 @@
                 currentType: 'pop'
             }
         },
-
         components: {
             GoodsList,
             NavBar,
@@ -56,8 +62,8 @@
         },
         created() {
             this.getHomeMultiData()
-            this.getGoodsData('sell')
-            this.getGoodsData('new')
+            this.getGoodsData('sell');
+            this.getGoodsData('new');
             this.getGoodsData('pop')
         },
         methods: {
@@ -69,11 +75,10 @@
                 })
             },
             getGoodsData(type) {
-                const page = this.goods[type].page + 1;
+                let page = this.goods[type].page + 1;
                 getGoodsData(type, page).then(res => {
-                    // console.log(res)
-                    this.goods[type].page = page;
-                    this.goods[type].list.push(...res.data.data.list)
+                    this.goods[type].page++;
+                    this.goods[type].list.push(...res.data.data.list);
                 })
             },
             //    tab control 自定义事件
@@ -97,6 +102,15 @@
             scroll(pos) {
                 // console.log(pos.y);
                 this.$refs.backtop.isShow = pos.y < -1050;
+            },
+            scrollToEnd() {
+                // getGoodsData(this.currentType)
+                this.getGoodsData(this.currentType)
+                // getGoodsData(this.currentType, this.goods[this.currentType].page+1).then(res => {
+                //     this.goods[this.currentType].page += 1;
+                //     this.goods[this.currentType].list.push(...res.data.data.list);
+                // })
+
             }
         },
         computed: {

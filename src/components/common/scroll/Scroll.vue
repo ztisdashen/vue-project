@@ -9,12 +9,13 @@
 
 <script>
     import BScroll from 'better-scroll'
+
     export default {
-        data(){
-            return {scroll:null}
+        data() {
+            return {scroll: null}
         },
         name: "Scroll"
-    ,    props: {
+        , props: {
             /**
              * 1 滚动的时候会派发scroll事件，会截流。
              * 2 滚动的时候实时派发scroll事件，不会截流。
