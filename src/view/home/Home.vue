@@ -3,19 +3,31 @@
         <nav-bar class="home-nav">
             <div slot="middle">购物街</div>
         </nav-bar>
+        <tab-control
+                :titles="['流行','新款','精品']"
+                class="tab-control"
+                ref="tabControl1"
+                @tabControlClick='tabClick'
+                v-show="isTabFixed"/>
         <scroll class="content-a"
                 ref="scroll"
                 :probeType='3'
-                @scrollToEnd="scrollToEnd"
+                @scrollToEnd='scrollToEnd'
                 :pullup="true"
                 :listenScroll="true"
                 @scroll='scroll'
                 :data="goodList">
-            <home-swiper :banner="banner"/>
+            <home-swiper :banner="banner"
+                         @swiperImgLoad="swiperImgLoad"/>
             <!--        <h2>主页</h2>-->
-            <home-recommend :recommends="recommends"/>
+            <home-recommend
+                    :recommends="recommends"
+            />
             <future-view/>
-            <tab-control :titles="['流行','新款','精品']" class="tab-control" @tabControlClick='tabClick'/>
+            <tab-control
+                    :titles="['流行','新款','精品']"
+                    ref="tabControl2"
+                    @tabControlClick='tabClick'/>
             <goods-list :goods="goodList"/>
         </scroll>
         <back-top ref='backtop' @click.native='backTop'/>
@@ -32,7 +44,8 @@
     import GoodsList from "../../components/content/goodslist/GoodsList";
     import Scroll from "../../components/common/scroll/Scroll";
     import BackTop from "../../components/content/backtop/BackTop";
-
+    import {deBounce} from '../../common/utils'
+    import {backTopMixin, itemLoadListenerMixin} from "../../common/mixin";
 
     export default {
         name: "Home",
@@ -46,7 +59,10 @@
                     new: {page: 0, list: []},
                     sell: {page: 0, list: []}
                 },
-                currentType: 'pop'
+                currentType: 'pop',
+                offsetTop: -1,
+                isTabFixed: false,
+                saveY: 0
             }
         },
         components: {
@@ -64,7 +80,8 @@
             this.getHomeMultiData()
             this.getGoodsData('sell');
             this.getGoodsData('new');
-            this.getGoodsData('pop')
+            this.getGoodsData('pop');
+
         },
         methods: {
             getHomeMultiData() {
@@ -95,28 +112,46 @@
                         break
 
                 }
-            },
-            backTop() {
-                this.$refs.scroll.scrollTo(0, 0, 500)
+                this.$refs.tabControl1.currentIndex = index;
+                this.$refs.tabControl2.currentIndex = index;
             },
             scroll(pos) {
-                // console.log(pos.y);
+                this.isTabFixed = -pos.y > this.offsetTop;
                 this.$refs.backtop.isShow = pos.y < -1050;
             },
             scrollToEnd() {
-                // getGoodsData(this.currentType)
                 this.getGoodsData(this.currentType)
-                // getGoodsData(this.currentType, this.goods[this.currentType].page+1).then(res => {
-                //     this.goods[this.currentType].page += 1;
-                //     this.goods[this.currentType].list.push(...res.data.data.list);
-                // })
-
+            },
+            swiperImgLoad() {
+                this.offsetTop = this.$refs.tabControl2.$el.offsetTop;
             }
+            //    防抖函数
+
         },
+        mixins: [backTopMixin, itemLoadListenerMixin],
         computed: {
             goodList() {
                 return this.goods[this.currentType].list
             }
+        },
+        mounted() {
+            // const refresh = deBounce(this.$refs.scroll.refresh, 100);
+            // this.$bus.$on('imgLoad', () => {
+            //     refresh()
+            // })
+            //解决tab control的吸顶效果   获取offset
+            // 但是由于许多元素的img没有加载完成，所以offsetTop时不正确的
+            // console.log(this.$refs.tabControl.$el.offsetTop);
+        },
+        activated() {
+            this.$refs.scroll.refresh();
+            this.$refs.scroll.scrollTo(0, this.saveY, 0);
+        },
+        deactivated() {
+            this.saveY = this.$refs.scroll.scrollY();
+            this.$refs.scroll.refresh()
+
+            this.$bus.$off('imgLoad', this.itemLoadListener)
         }
     }
 </script>
@@ -129,31 +164,42 @@
     }
 
     .home-nav {
-        background: var(--color-tint);
-        color: white;
-        font-size: 18px;
+        background-color: var(--color-tint);
+        font-weight: 700;
+        color: #fff;
 
-        position: fixed;
-        left: 0;
-        right: 0;
-        top: 0;
-        /*设置防遮盖*/
+        /*position: fixed;*/
+        /*left: 0;*/
+        /*right: 0;*/
+        /*top: 0;*/
+        /*!*设置防遮盖*!*/
         z-index: 9;
-        /*position: sticky;*/
-        /*top: -44px;*/
     }
 
     /*当tab control变化到44px时 属性由static变成fixed*/
     .tab-control {
-        position: sticky;
-        top: 44px;
+        position: relative;
+        /*top: 44px;*/
         /*background: white;*/
         z-index: 9;
     }
 
     .content-a {
-        height: calc(100% - 93px);
-        overflow: hidden;
-        margin-top: 44px;
+        /*height: calc(100% - 93px);*/
+        /*overflow: hidden;*/
+        /*margin-top: 44px;*/
+        position: absolute;
+        top: 44px;
+        bottom: 49px;
+        left: 0;
+        right: 0;
+    }
+
+    .fix {
+        position: absolute;
+        top: 44px;
+        right: 0;
+        left: 0;
+        z-index: 9;
     }
 </style>

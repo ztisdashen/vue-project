@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <router-view/>
+    <keep-alive exclude="Detail">
+      <router-view/>
+    </keep-alive>
+
     <main-tab-bar/>
   </div>
 </template>
@@ -15,6 +18,11 @@ export default {
   components: {
     MainTabBar
   },
+  computed: {
+    isShowMainBar() {
+      return this.$route.path.indexOf("detail") <= -1
+    }
+  }
 
 }
 </script>

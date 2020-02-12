@@ -4,15 +4,16 @@ vue.use(Router);
 const Home =()=> import("../view/home/Home");
 const Me = ()=>import("../view/me/Me");
 const Cart = ()=>import("../view/cart/Cart");
-const Category = () =>import("../view/category/Category");
-const router =new Router({
-    mode:"history",
+const Category = () => import("../view/category/Category");
+const Detail = () => import('../view/detail/Detail')
+const router = new Router({
+    mode: "history",
     routes: [
         {
             path: "",
             redirect: "/home",
-            meta:{
-                title:"首页"
+            meta: {
+                title: "首页"
             }
         },
         {
@@ -32,17 +33,23 @@ const router =new Router({
         {
             path: "/cart",
             component: Cart,
-            meta:{
-                title:"购物车"
+            meta: {
+                title: "购物车"
             }
         },
         {
             path: "/me",
             component: Me,
-            meta:{
-                title:"我的"
+            meta: {
+                title: "我的"
             }
-        },
+        }, {
+            path: "/detail",
+            component: Detail,
+            meta: {
+                title: '详情'
+            }
+        }
     ]
 });
 router.beforeEach((to,from,next)=>{

@@ -22,6 +22,6 @@
         bottom: 0;
         right: 0;
         /*  小阴影 x,y,模糊程度，颜色*/
-        box-shadow: 0px -10px 5px #f6f6f6;
+        /*box-shadow: 0 -10px 5px #f6f6f6;*/
     }
 </style>

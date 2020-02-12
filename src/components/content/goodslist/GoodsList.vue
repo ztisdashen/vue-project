@@ -11,15 +11,19 @@
 
     export default {
         name: "GoodsList",
-        data(){return {}},
-        props:{
-            goods:{
-                type:Array,
+        data() {
+            return {}
+        },
+        props: {
+            goods: {
+                type: Array,
                 default() {
                     return [];
                 }
             }
-        },components:{    GoodsItem
+        },
+        components: {
+            GoodsItem
         }
     }
 </script>

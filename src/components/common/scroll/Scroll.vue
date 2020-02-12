@@ -146,13 +146,20 @@
                 // 代理better-scroll的refresh方法
                 this.scroll && this.scroll.refresh()
             },
-            scrollTo() {
+            scrollTo(x, y, time = 0) {
                 // 代理better-scroll的scrollTo方法
-                this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
+                if (this.scroll)
+                    this.scroll.scrollTo(x, y, time)
             },
             scrollToElement() {
                 // 代理better-scroll的scrollToElement方法
                 this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
+            },
+            scrollY() {
+                if (this.scroll)
+                    return this.scroll.y;
+                else
+                    return 0
             }
         },
         watch: {

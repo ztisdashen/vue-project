@@ -8,7 +8,7 @@
     export default {
         name: "BackTop",
         data(){
-            return {isShow:true}
+            return {isShow: false}
         }
     }
 </script>

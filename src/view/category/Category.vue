@@ -43,7 +43,8 @@
 .wrapper{
     /*原生局部滚动*/
     height: 150px;
-    background: red;
+
+    background: #ff8198;
     overflow: hidden;
     /*overflow-y: scroll;*/
 }

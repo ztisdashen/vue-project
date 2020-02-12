@@ -1,27 +1,43 @@
 <template>
-    <div class="goods">
-        <a :href="goodsItem.link">
-            <img :src="goodsItem.show.img">
+    <div class="goods" @click="loadDetail(goodsItem.iid)">
+        <a>
+            <img v-lazy="showImg" @load="imgLoad">
+            <!--            <img :src="showImg" @load="imgLoad">-->
         </a>
-
-<div class="goods-info">
-    <p class="goods-title">{{goodsItem.title}}</p>
-    <span class="price">{{goodsItem.price}}</span>
-    <span class="collect">{{goodsItem.cfav}}</span>
-</div>
+        <!--        <img v-l>-->
+        <div class="goods-info">
+            <p class="goods-title">{{goodsItem.title}}</p>
+            <span class="price">{{goodsItem.price}}</span>
+            <span class="collect">{{goodsItem.cfav}}</span>
+        </div>
 
     </div>
 </template>
 
 <script>
     export default {
-        name: "GoodsItem",components:{
-
-        },props:{
-            goodsItem:{
-                type:Object,default(){
+        name: "GoodsItem",
+        components: {},
+        props: {
+            goodsItem: {
+                type: Object, default() {
                     return {}
                 }
+            }
+        },
+        methods: {
+            imgLoad() {
+                this.$bus.$emit("imgLoad")
+            },
+            loadDetail(id) {
+                this.$router.push({path: "/detail", query: {iid: id}})
+            }
+        }, computed: {
+            showImg() {
+                if (this.goodsItem.show)
+                    return this.goodsItem.show.img
+                else
+                    return this.goodsItem.image
             }
         }
     }
@@ -35,6 +51,7 @@
         margin-right: 5px;
         margin-left: 5px;
     }
+
     .goods a img {
         width: 100%;
         border-radius: 7px;
